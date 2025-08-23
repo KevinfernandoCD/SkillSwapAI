@@ -269,7 +269,7 @@ export class SessionsService {
             const matchingSessions = await this.sessionsRepository.findSessionsByKeywords(
               expandedLearningKeywords,
               userId, // Exclude current user's sessions
-              0 // Minimum 1 keyword must match
+              1 // Minimum 1 keyword must match
             );
 
             this.logger.log(`Found ${matchingSessions.length} matching sessions for user's learning needs`);

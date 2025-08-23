@@ -3,6 +3,7 @@ import { Calendar, Clock, ArrowRightLeft } from "lucide-react";
 import { useGetExchangeSessions } from "@/hooks/useGetExchangeSessions";
 import { ExchangeSession } from "@/hooks/useGetUpcomingExchangeSessions";
 import UserProfile from "@/components/ui/UserProfile";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
@@ -28,6 +29,7 @@ const ExchangeSessionsPage: React.FC = () => {
 
   const { toast } = useToast();
   const [completingSessions, setCompletingSessions] = useState<Set<string>>(new Set());
+  const [confirmCompleteSession, setConfirmCompleteSession] = useState<string | null>(null);
 
   // Use a single completion handler that works with any session
   const handleComplete = async (sessionId: string) => {
@@ -50,6 +52,21 @@ const ExchangeSessionsPage: React.FC = () => {
         return newSet;
       });
     }
+  };
+
+  const handleCompleteClick = (sessionId: string) => {
+    setConfirmCompleteSession(sessionId);
+  };
+
+  const handleConfirmComplete = () => {
+    if (confirmCompleteSession) {
+      handleComplete(confirmCompleteSession);
+      setConfirmCompleteSession(null);
+    }
+  };
+
+  const handleCancelComplete = () => {
+    setConfirmCompleteSession(null);
   };
 
   const filtered = useMemo(() => {
@@ -219,7 +236,7 @@ const ExchangeSessionsPage: React.FC = () => {
                   )}
                   {session.status !== 'completed' && session.status !== 'cancelled' && session.status !== 'expired' && (
                     <button
-                      onClick={() => handleComplete(session._id)}
+                      onClick={() => handleCompleteClick(session._id)}
                       disabled={completingSessions.has(session._id)}
                       className="px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
@@ -232,6 +249,33 @@ const ExchangeSessionsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Confirmation Dialog for Mark as Complete */}
+      <Dialog open={!!confirmCompleteSession} onOpenChange={() => setConfirmCompleteSession(null)}>
+        <DialogContent className="bg-gray-900 border border-gray-800 text-white">
+          <DialogHeader>
+            <DialogTitle>Mark session as complete?</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-300">
+            This will set the status of the exchange session to completed. You can't undo this action.
+          </p>
+          <DialogFooter>
+            <button
+              className="px-3 py-1.5 text-sm font-medium text-gray-300 bg-gray-800 rounded-md hover:bg-gray-700"
+              onClick={handleCancelComplete}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-60"
+              onClick={handleConfirmComplete}
+              disabled={completingSessions.has(confirmCompleteSession || '')}
+            >
+              {completingSessions.has(confirmCompleteSession || '') ? 'Completing...' : 'Confirm'}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

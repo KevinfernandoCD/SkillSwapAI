@@ -88,10 +88,9 @@ const SkillSwapModal: React.FC<SkillSwapModalProps> = ({
     createExchangeRequest({
       sessionId: session._id,
       recipient: session.hostId._id,
-      offeredSkillId: selectedSkillId,
-      requestedSkillId: sessionSkillId,
-      message,
-      meetingLink: meetingLink.trim() || undefined
+      offeredSkillId: sessionSkillId,
+      requestedSkillId: selectedSkillId,
+      message
     });
   };
 
@@ -414,12 +413,9 @@ const SkillSwapModal: React.FC<SkillSwapModalProps> = ({
                           <div className="mt-3 pt-2 border-t border-primary/30">
                             <div className="text-xs text-primary/80 mb-1">Agenda</div>
                             <ul className="text-xs text-primary/90 space-y-1">
-                              {selectedSkill.agenda.slice(0, 3).map((item, idx) => (
+                              {selectedSkill.agenda.map((item, idx) => (
                                 <li key={idx} className="text-left">• {item}</li>
                               ))}
-                              {selectedSkill.agenda.length > 3 && (
-                                <li className="text-primary/70 text-left">+{selectedSkill.agenda.length - 3} more items</li>
-                              )}
                             </ul>
                           </div>
                         )}
@@ -444,19 +440,14 @@ const SkillSwapModal: React.FC<SkillSwapModalProps> = ({
                         </div>
                         <div className="text-sm text-gray-400 mt-1">Session Skill</div>
                         
-                        {/* Display agenda if available */}
-                        {session.teachSkillId && session.teachSkillId.length > 0 && 
-                         session.teachSkillId[0].agenda && 
-                         session.teachSkillId[0].agenda.length > 0 && (
+                        {/* Display session focus keywords if available */}
+                        {session.focusKeywords && session.focusKeywords.length > 0 && (
                           <div className="mt-3 pt-2 border-t border-gray-600">
-                            <div className="text-xs text-gray-400 mb-1">Agenda</div>
+                            <div className="text-xs text-gray-400 mb-1">Session Focus</div>
                             <ul className="text-xs text-gray-300 space-y-1">
-                              {session.teachSkillId[0].agenda.slice(0, 3).map((item, idx) => (
+                              {session.focusKeywords.map((item, idx) => (
                                 <li key={idx} className="text-left">• {item}</li>
                               ))}
-                              {session.teachSkillId[0].agenda.length > 3 && (
-                                <li className="text-gray-400 text-left">+{session.teachSkillId[0].agenda.length - 3} more items</li>
-                              )}
                             </ul>
                           </div>
                         )}

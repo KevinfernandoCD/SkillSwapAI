@@ -241,7 +241,7 @@ export class SessionsRepository {
    * @param excludeUserId User ID to exclude from results (current user's sessions)
    * @param minMatches Minimum number of keywords that must match
    */
-  async findSessionsByKeywords(keywords: string[], excludeUserId: string, minMatches: number = 0): Promise<Session[]> {
+  async findSessionsByKeywords(keywords: string[], excludeUserId: string, minMatches: number = 1): Promise<Session[]> {
     // Create a query that finds sessions where metadata contains at least minMatches keywords
 
     const query = {
